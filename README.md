@@ -22,5 +22,5 @@ password - "password"
 
 ### Get companies by country
 ```
-http://localhost:8080/users?country=canada
+http://localhost:8080/companies?country=canada
 ```
