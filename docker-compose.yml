@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  nginx:
+    container_name: laravel_web
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/nginx/Nginx.Dockerfile
+    ports:
+      - 8080:80
+    volumes:
+      - ./:/var/www/laravel
+    links:
+      - fpm
+  fpm:
+    container_name: laravel_php-fpm
+    restart: always
+    build:
+      context: .
+      dockerfile: docker/php-fpm/Fpm.Dockerfile
+    volumes:
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/php.ini
+      - ./:/var/www/laravel:cached
+    working_dir: /var/www/laravel
+    links:
+      - mysql
+    environment:
+      - DB_PORT=3306
+      - DB_HOST=mysql
+  mysql:
+    container_name: laravel_mysql_db
+    restart: always
+    image: mysql:5.7
+    ports:
+      - 33061:3306
+    environment:
+      - MYSQL_DATABASE=laravel
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_ROOT_PASSWORD=root
+    volumes:
+      - ./docker/db:/var/lib/mysql
